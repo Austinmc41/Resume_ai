@@ -1,11 +1,12 @@
 import json
+from typing import List
+
 import pymupdf4llm
-from google import genai
 
 class ResumeParser:
 
-    def __init__(self, api_key):
-        self.client = genai.Client(api_key=api_key)
+    def __init__(self, client):
+        self.client = client
 
     def parse_resume(self, pdf):
         response = self.client.models.generate_content(
@@ -45,3 +46,12 @@ Here is the Markdown resume:
         """ + pymupdf4llm.to_markdown(pdf)
         ).text
         return json.loads(response[response.find('{'):response.rfind('}') + 1], strict=False)
+
+    def get_job_titles(self, resume) -> List:
+        job_titles = self.client.models.generate_content(
+            model="gemini-2.0-flash",
+            contents=("Given their resume below, give some suggested job titles that this person should apply to. "
+                      "Do not add any preamble or conclusion, only return a comma-delineated a list.\n")
+                     + str(resume)
+        ).text.split(',')
+        return [jt.strip() for jt in job_titles]
