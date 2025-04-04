@@ -1,6 +1,5 @@
 import datetime
 import json
-import math
 import os
 from google import genai
 from dotenv import load_dotenv
