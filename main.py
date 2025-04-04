@@ -11,6 +11,13 @@ load_dotenv()  # take environment variables from .env.
 
 my_secret_key = os.getenv("SECRET_KEY")
 
+def string_cleaner(rouge_text):
+    # "" instead of " " in .join() method
+    return (("".join(rouge_text.strip())
+            .encode('ascii', 'ignore')
+            .decode("utf-8"))
+            .replace("\\",""))
+
 if __name__ == "__main__":
     gemini = genai.Client(api_key=my_secret_key)
     resume_parser = ResumeParser(gemini)
